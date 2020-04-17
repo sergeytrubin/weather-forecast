@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 """
-Enter location to show weather forecast: New York
-Weather for New York:
-2020-04-16          Light Cloud         high 10.1°C         low 5.2°C
-2020-04-17          Light Rain          high 10.4°C         low 3.6°C
-2020-04-18          Heavy Rain          high 10.4°C         low 7.2°C
-2020-04-19          Light Cloud         high 15.9°C         low 5.8°C
-2020-04-20          Showers   high 13.9°C         low 9.2°C
-2020-04-21          Showers   high 17.1°C         low 5.8°C
-Where in the world are you?
-
-Returns:
-    [type] -- [description]
+Solution from the instructor
 """
 
 import requests
