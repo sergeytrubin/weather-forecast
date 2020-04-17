@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Enter location to show weather forecast: New York
 Weather for New York:
@@ -13,56 +14,48 @@ Returns:
     [type] -- [description]
 """
 
-
 import requests
 
-def user_location():
-    user_city = input('Enter location to show weather forecast: ')
-    if isinstance(user_city, str) and len(user_city) > 0:
-        return user_city
-    return []
+API_ROOT = 'https://www.metaweather.com'
+API_LOCATION = '/api/location/search/?query='
+API_WEATHER = '/api/location/'  # + woeid
 
-# function that adding %20 to string if there is a space
-def format_string(city):
+def fetch_location(query):
+    return requests.get(API_ROOT + API_LOCATION + query).json()
+
+def fetch_weather(woeid):
+    return requests.get(API_ROOT + API_WEATHER + str(woeid)).json()
+
+def disambiguate_locations(locations):
+    print("Ambiguous location! Did you mean:")
+    for loc in locations:
+        print(f"\t* {loc['title']}")
+
+def display_weather(weather):
+    print(f"Weather for {weather['title']}:")
+    for entry in weather['consolidated_weather']:
+        date = entry['applicable_date']
+        high = entry['max_temp']
+        low = entry['min_temp']
+        state = entry['weather_state_name']
+        print(f"{date}\t{state}\thigh {high:2.1f}°C\tlow {low:2.1f}°C")
+
+def weather_dialog():
     try:
-        location = city.split(" ")
-        if len(location) > 1:
-            for word in location:
-                word = word[0].upper() + word[0:].lower()
-            return '%20'.join(location)
-        return city
-    except AttributeError:
-        print(f"No forecast data found")
-        user_location()
+        where = ''
+        while not where:
+            where = input("Where in the world are you? ")
+        locations = fetch_location(where)
+        if len(locations) == 0:
+            print("I don't know where that is.")
+        elif len(locations) > 1:
+            disambiguate_locations(locations)
+        else:
+            woeid = locations[0]['woeid']
+            display_weather(fetch_weather(woeid))
+    except requests.exceptions.ConnectionError:
+        print("Couldn't connect to server! Is the network up?")
 
-# sending get request to webapi
-def get_webapi_data(url):
-    req = requests.get(url)
-    return req.json()
-
-# getting the WOEID for user location
-def get_woeid(city):
-    if city == []:
-        print(f"No forecast data found for {city}\n")
-        user_location()
-    location_string = format_string(city)
-    woeid_url = 'https://www.metaweather.com/api/location/search/?query=' + location_string
-    woeid_data = get_webapi_data(woeid_url)
-    return woeid_data[0]['woeid']
-
-# getting the weather data
-def get_weather_data(woeid):
-    metaweather_url = 'https://www.metaweather.com/api/location/' + str(woeid)
-    return get_webapi_data(metaweather_url)
-
-# presenting the weather data
-def show_forecast(city):
-    weather_data = get_weather_data(get_woeid(city))
-    print(f"Weather for {city}:")
-    for forecast in weather_data['consolidated_weather']:
-        print(f"{forecast['applicable_date']}\t{forecast['weather_state_name']}\thigh: {forecast['max_temp']:0.2f}\tlow: {forecast['min_temp']:0.2f}")
-
-
-if __name__ == "__main__":
-    city = user_location()
-    show_forecast(city)
+if __name__ == '__main__':
+    while True:
+        weather_dialog()
