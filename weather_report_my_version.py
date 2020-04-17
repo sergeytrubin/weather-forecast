@@ -9,8 +9,11 @@ Weather for New York:
 2020-04-21          Showers   high 17.1°C         low 5.8°C
 Where in the world are you?
 
-Returns:
-    [type] -- [description]
+TODO:
+-Simplify code
+-remove unnecessary code
+-user_location function is not needed all could be done in show_forecast
+-format_string is not needed - api accept case insensitive
 """
 
 
