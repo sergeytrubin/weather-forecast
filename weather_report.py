@@ -1,6 +1,20 @@
-import requests
+"""
+Where in the world are you? New York
+Weather for New York:
+2020-04-16          Light Cloud         high 10.1°C         low 5.2°C
+2020-04-17          Light Rain          high 10.4°C         low 3.6°C
+2020-04-18          Heavy Rain          high 10.4°C         low 7.2°C
+2020-04-19          Light Cloud         high 15.9°C         low 5.8°C
+2020-04-20          Showers   high 13.9°C         low 9.2°C
+2020-04-21          Showers   high 17.1°C         low 5.8°C
+Where in the world are you? 
 
-city = "New York"
+Returns:
+    [type] -- [description]
+"""
+
+
+import requests
 
 # function that adding %20 to string if there is a space
 def format_string(city):
@@ -26,6 +40,15 @@ def get_weather_data(woeid):
     return get_webapi_data(metaweather_url)
 
 # getting the weather data
-weather_data = get_weather_data(get_woeid(city))
 
-print(weather_data)
+def show_forecast(city):
+    weather_data = get_weather_data(get_woeid(city))
+    for forecast in weather_data['consolidated_weather']:
+        print(f"{forecast['applicable_date']}\t{forecast['weather_state_name']}\thigh: {forecast['max_temp']:0.2f}\tlow: {forecast['min_temp']:0.2f}")
+
+
+if __name__ == "__main__":
+    city = "New York"
+    show_forecast(city)
+""" city = "New York"
+show_forecast(city) """
